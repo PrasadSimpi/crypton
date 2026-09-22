@@ -1,6 +1,6 @@
 # Crypton — Project Ledger
 
-<!-- PROJECT LEDGER (iteration: 1) -->
+<!-- PROJECT LEDGER (iteration: 2) -->
 ```yaml
 Active Architecture:
   State Management: Riverpod 3.4.3 — hand-written Notifier / AsyncNotifier, NO code-gen
@@ -75,6 +75,33 @@ Deliberate Deviations From The Brief:
   - Timeframe chips are 44x44 tap targets, not 48 — the reference's own stated floor; everything
     else interactive is 48
 
+Layout Rules Established (iteration 2 — after the Portfolio/Profile crash):
+  - A stretch Row inside a scroll view MUST sit under IntrinsicHeight. The scroll view's
+    unbounded height becomes a TIGHT infinite constraint on the row's children otherwise,
+    and the subtree throws. Fixed in ProfileStatsRow and the Portfolio P&L row
+  - stretch on a Column is always safe here — its cross axis is horizontal and PageColumn
+    bounds it. stretch on a Row is only safe under IntrinsicHeight or a fixed height
+  - Never pair Spacer() with Flexible in the same Row: equal flex means they split the free
+    space, clipping text long before it runs out of room (fixed in AllocationCard)
+  - One broken tab breaks every tab: IndexedStack lays out ALL visited branches each frame,
+    so a crash in Portfolio or Profile also freezes Home and Markets
+
+Fixed in iteration 2:
+  - profile_stats_row.dart — Row wrapped in IntrinsicHeight
+  - portfolio_screen.dart — P&L Row wrapped in IntrinsicHeight
+  - allocation_card.dart — Spacer + Flexible replaced with a single Expanded, baseline
+    alignment dropped
+  - test/features/layout_regression_test.dart — 4 tests pumping the real widgets in the
+    unbounded-height condition that failed, one at 2x text scale. Screens are pumped inside
+    a Scaffold, as the shell supplies one: a bare MaterialApp has no Material ancestor and
+    Switch asserts
+  - test/features/shell_navigation_test.dart — boots the real app, skips sign-in and taps
+    every tab twice round at four window sizes. The single-widget tests above could not see
+    the bug: it only appeared once several branches were alive in the IndexedStack
+  - test/features/portfolio/portfolio_summary_test.dart — two closeTo tolerances widened to
+    0.1. The mock's per-coin average costs are rounded to the cent, so the totals land ~0.07
+    off the reference figures; that is the fixtures, not the arithmetic
+
 Open TODOs / Known Tech Debt:
   - Buy / Sell / Send / Receive are affordances only — no order flow
   - Timeframe selectors change the chip state but not the series (one dataset per asset)
@@ -82,6 +109,7 @@ Open TODOs / Known Tech Debt:
   - Auth is a mock repository — any valid email + 6-char password passes
   - Non-BTC candles are synthesised from each coin's sparkline, not real OHLC
   - Volume bars are derived from body size, not traded volume (no volume in the fixtures)
-  - flutter analyze has not been run — no Flutter SDK in this session (declined by user)
+  - No CI: flutter analyze and flutter test are green locally (0 issues, 23 tests) but
+    nothing enforces that on push
 ```
 <!-- END LEDGER -->

@@ -20,16 +20,24 @@ class ProfileStatsRow extends StatelessWidget {
       (value: '${profile.assetsHeld}', label: 'ASSETS HELD'),
     ];
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        for (var i = 0; i < tiles.length; i++) ...<Widget>[
-          if (i > 0) const SizedBox(width: AppSpacing.sm + 2),
-          Expanded(
-            child: _StatTile(value: tiles[i].value, label: tiles[i].label),
-          ),
+    // IntrinsicHeight is what makes CrossAxisAlignment.stretch legal here. This
+    // row lives inside a vertically scrolling column, so its own height arrives
+    // unbounded; a stretch row would then hand its children a tight infinite
+    // height and throw. IntrinsicHeight measures the tallest tile first and
+    // gives the row that height, so the three tiles still match - and they keep
+    // matching when the system text size grows.
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (var i = 0; i < tiles.length; i++) ...<Widget>[
+            if (i > 0) const SizedBox(width: AppSpacing.sm + 2),
+            Expanded(
+              child: _StatTile(value: tiles[i].value, label: tiles[i].label),
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

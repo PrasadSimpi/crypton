@@ -31,17 +31,19 @@ class AllocationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
             children: <Widget>[
               Text('Allocation', style: AppTextStyles.titleSmall),
-              const Spacer(),
-              Flexible(
+              const SizedBox(width: AppSpacing.md),
+              // One flexible child, not a Spacer plus a Flexible: those two
+              // split the free space between them, which clipped this caption
+              // long before it actually ran out of room.
+              Expanded(
                 child: Text(
                   '${portfolio.assetCount} assets - updated just now',
                   style: AppTextStyles.subtleBold.copyWith(
                     color: AppColors.textTertiary,
                   ),
+                  textAlign: TextAlign.right,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

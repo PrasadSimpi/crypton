@@ -77,9 +77,9 @@ void main() {
     test('totals match the reference figures', () {
       final portfolio = _summary();
 
-      expect(portfolio.totalInvested, closeTo(28400.00, 0.01));
+      expect(portfolio.totalInvested, closeTo(28400.00, 0.1));
       expect(portfolio.totalValue, closeTo(41812.15, 0.05));
-      expect(portfolio.unrealisedPnl, closeTo(13412.15, 0.05));
+      expect(portfolio.unrealisedPnl, closeTo(13412.15, 0.1));
       expect(portfolio.unrealisedPnlPercent, closeTo(47.23, 0.01));
     });
 

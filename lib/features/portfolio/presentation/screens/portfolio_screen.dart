@@ -95,25 +95,30 @@ class _PortfolioBody extends StatelessWidget {
         const SizedBox(height: AppSpacing.tile),
         AllocationCard(portfolio: data),
         const SizedBox(height: AppSpacing.md),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              child: PnlMiniCard(
-                label: 'REALISED P&L',
-                amount: data.realisedPnl,
-                note: 'Booked - ${data.realisedExits} exits',
+        // IntrinsicHeight bounds the row before stretch is applied. Without it
+        // the row inherits an unbounded height from the scroll view and hands
+        // its children a tight infinite height, which throws.
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                child: PnlMiniCard(
+                  label: 'REALISED P&L',
+                  amount: data.realisedPnl,
+                  note: 'Booked - ${data.realisedExits} exits',
+                ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: PnlMiniCard(
-                label: 'UNREALISED P&L',
-                amount: data.unrealisedPnl,
-                note: 'Open - ${data.assetCount} positions',
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: PnlMiniCard(
+                  label: 'UNREALISED P&L',
+                  amount: data.unrealisedPnl,
+                  note: 'Open - ${data.assetCount} positions',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: AppSpacing.card),
         const SectionHeader(title: 'Holdings', trailingLabel: 'BY VALUE'),
